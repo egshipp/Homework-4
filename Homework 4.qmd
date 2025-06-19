@@ -7,4 +7,26 @@ editor: visual
 
 ### Question 1: What is the purpose of the lapply() function? What is the equivalent purrr function?
 
-The purpose of the lapply() function is to apply a function to each element in a list in R.
+The purpose of the lapply() function is to apply a function to each element in a list in R. The equivalent purrr function is map().
+
+### Question 2: Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())
+
+```{r}
+lapply(my_list, cor, method = "kendall")
+```
+
+### Question 3: What are two advantages of using purrr functions instead of the BaseR apply family?
+
+1. Greater consistency between functions when using the purrr package
+
+2. Almost every purrr function is type stable, meaning you are easily able
+to predict the type of data output you will receive from the function name. 
+
+### Question 4: What is a side-effect function?
+
+A side-effect function does not actually change the data, instead the goal 
+is to just produce something. Some examples include; plot(), print(), and write.csv().
+
+### Question 5: Why can you name a variable sd in a function and not cause any issues with the sd function?
+
+Variable names within functions create a temperorary environment that does not overwrite other functions. 
