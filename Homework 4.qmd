@@ -30,3 +30,136 @@ is to just produce something. Some examples include; plot(), print(), and write.
 ### Question 5: Why can you name a variable sd in a function and not cause any issues with the sd function?
 
 Variable names within functions create a temperorary environment that does not overwrite other functions. 
+
+## Task 2: Writing R Functions
+### Question 1: Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.
+```{r}
+
+getRMSE <- function(vector_resp, vector_pred){
+  
+  diff_sq <- (vector_resp - vector_pred)^2
+  
+  MSE <- mean(diff_sq, na.rm = TRUE)
+  
+  RMSE <- sqrt(MSE)
+  
+  return(RMSE)
+  
+}
+```
+
+### Question 2: Testing getRMSE()
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+# No NA
+
+getRMSE(resp, pred)
+
+# With NA
+
+resp_missing <- resp
+resp_missing[c(13, 20)] <- NA_real_
+
+getRMSE(resp_missing, pred)
+
+```
+
+### Question 3: Write a function called getMAE() that follows the specifications of the getRMSE() function.
+
+```{r}
+
+getMAE <- function(vector_resp, vector_pred){
+  
+  abs_diff <- abs(vector_resp - vector_pred)
+  
+  MAE <- mean(abs_diff, na.rm = TRUE)
+  
+  return(MAE)
+}
+
+```
+
+### Question 4: Testing getMAE()
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+#No NA
+
+getMAE(resp, pred)
+
+# With NA
+
+resp_missing <- resp
+resp_missing[c(13, 20)] <- NA_real_
+
+getMAE(resp_missing, pred)
+
+```
+### Question 5: Create a wrapper function 
+```{r}
+wrapper <- function(vector_resp, vector_pred, metrics = c("RMSE", "MAE"))
+                    {
+  
+  if((!is.vector(vector_resp)) | (!is.atomic(vector_resp))| ((!is.numeric(vector_resp))) | (!is.vector(vector_pred)) | (!is.atomic(vector_pred))| (!is.numeric(vector_pred))){
+    return("Both inputs must be numeric atomic vectors.")
+  } else{
+  
+  result <- list()
+  
+  if("RMSE" %in% metrics){
+    result$RMSE <- getRMSE(vector_resp, vector_pred)}
+  
+  if("MAE" %in% metrics){
+    result$MAE <- getMAE(vector_resp, vector_pred)}
+  
+ return(result)}
+  
+}
+  
+```
+
+### Question 6: Test wrapper function
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+# No NA (Individual)
+
+wrapper(resp, pred, metric = "RMSE")
+
+wrapper(resp, pred, metric = "MAE")
+
+# No NA (Both Metrics)
+
+wrapper(resp, pred)
+
+# With NA
+
+resp_missing <- resp
+resp_missing[c(13, 20)] <- NA_real_
+
+wrapper(resp_missing, pred, metric = "RMSE")
+
+wrapper(resp_missing, pred, metric = "MAE")
+
+wrapper(resp_missing, pred)
+
+# Incorrect data
+
+resp_incorrect <- data.frame(1:100)
+
+wrapper(resp_incorrect, pred)
+```
+
