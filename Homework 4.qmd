@@ -32,6 +32,7 @@ is to just produce something. Some examples include; plot(), print(), and write.
 Variable names within functions create a temperorary environment that does not overwrite other functions. 
 
 ## Task 2: Writing R Functions
+
 ### Question 1: Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.
 ```{r}
 
@@ -109,7 +110,9 @@ getMAE(resp_missing, pred)
 wrapper <- function(vector_resp, vector_pred, metrics = c("RMSE", "MAE"))
                     {
   
-  if((!is.vector(vector_resp)) | (!is.atomic(vector_resp))| ((!is.numeric(vector_resp))) | (!is.vector(vector_pred)) | (!is.atomic(vector_pred))| (!is.numeric(vector_pred))){
+  if((!is.vector(vector_resp)) | (!is.atomic(vector_resp))|
+     ((!is.numeric(vector_resp))) | (!is.vector(vector_pred)) 
+     | (!is.atomic(vector_pred))| (!is.numeric(vector_pred))){
     return("Both inputs must be numeric atomic vectors.")
   } else{
   
@@ -162,4 +165,58 @@ resp_incorrect <- data.frame(1:100)
 
 wrapper(resp_incorrect, pred)
 ```
+## Task 3:  Querying an API and a Tidy-Style Function
+My API key: 9aacf935958947a9aced2053f23ea00c
+
+```{r}
+install.packages("httr")
+install.packages("jsonlite")
+
+library(httr)
+library(jsonlite)
+library(tidyverse)
+
+```
+### Question 1:Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object).
+
+The API I chose relates to recent published articles on climate change.
+
+```{r}
+climate_change_api <- httr::GET("https://newsapi.org/v2/everything?q=climate%20change&language=en&sortBy=publishedAt&apiKey=9aacf935958947a9aced2053f23ea00c")
+
+```
+
+### Question 2: Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!
+```{r}
+climate_parsed <- fromJSON(rawToChar(climate_change_api$content))
+
+climate_articles <- as_tibble(climate_parsed)
+```
+
+### Question 3: Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.
+```{r}
+api_function <- function(query, from_date, api_key){
+  base_url <- "https://newsapi.org/v2/everything"
+  url <- paste0(base_url, "?q=", query, "&from=", from_date, "&apikey=", ... = api_key)
+  
+  raw_data <- httr::GET(url)
+  
+  parsed_data <- fromJSON(rawToChar(raw_data$content))
+  
+  data <- as_tibble(parsed_data)
+  
+  return(data)
+}
+```
+
+Testing function on GameStop data
+```{r}
+api_key <- "9aacf935958947a9aced2053f23ea00c"
+api_function(
+  query = "gamestop",
+  from_date = "2025-06-19",
+  api_key = api_key
+)
+```
+
 
