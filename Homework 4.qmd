@@ -3,6 +3,13 @@ title: "Homework 4"
 format: pdf
 editor: visual
 ---
+
+```{r, message = FALSE, echo = FALSE, warning = FALSE}
+library(httr)
+library(jsonlite)
+library(tidyverse)
+```
+
 ## Task 1: Conceptual Questions
 
 ### Question 1: What is the purpose of the lapply() function? What is the equivalent purrr function?
@@ -12,7 +19,7 @@ The purpose of the lapply() function is to apply a function to each element in a
 ### Question 2: Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())
 
 ```{r}
-lapply(my_list, cor, method = "kendall")
+# lapply(my_list, cor, method = "kendall")
 ```
 
 ### Question 3: What are two advantages of using purrr functions instead of the BaseR apply family?
@@ -166,17 +173,7 @@ resp_incorrect <- data.frame(1:100)
 wrapper(resp_incorrect, pred)
 ```
 ## Task 3:  Querying an API and a Tidy-Style Function
-My API key: 9aacf935958947a9aced2053f23ea00c
 
-```{r}
-install.packages("httr")
-install.packages("jsonlite")
-
-library(httr)
-library(jsonlite)
-library(tidyverse)
-
-```
 ### Question 1:Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object).
 
 The API I chose relates to recent published articles on climate change.
@@ -197,7 +194,13 @@ climate_articles <- as_tibble(climate_parsed)
 ```{r}
 api_function <- function(query, from_date, api_key){
   base_url <- "https://newsapi.org/v2/everything"
-  url <- paste0(base_url, "?q=", query, "&from=", from_date, "&apikey=", ... = api_key)
+  url <- paste0(base_url, 
+                "?q=", 
+                query, 
+                "&from=", 
+                from_date, 
+                "&apikey=", 
+                ... = api_key)
   
   raw_data <- httr::GET(url)
   
